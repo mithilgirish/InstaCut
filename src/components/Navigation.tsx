@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, LogIn, UserPlus } from "lucide-react";
+import { Menu, X, LogIn, UserPlus, Moon, Sun } from "lucide-react";
 import { 
   SignedIn, 
   SignedOut, 
@@ -14,9 +14,16 @@ import {
 const Navigation = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [theme, setTheme] = useState("light");
   const { user } = useUser();
   
   useEffect(() => {
+    // Check for user's preferred theme on initial load
+    const savedTheme = localStorage.getItem("theme") || 
+                       (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    setTheme(savedTheme);
+    document.documentElement.classList.toggle("dark", savedTheme === "dark");
+    
     const handleScroll = () => {
       if (window.scrollY > 10) {
         setIsScrolled(true);
@@ -28,6 +35,13 @@ const Navigation = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    document.documentElement.classList.toggle("dark", newTheme === "dark");
+    localStorage.setItem("theme", newTheme);
+  };
 
   const scrollToUploader = () => {
     const uploaderElement = document.getElementById('image-uploader');
@@ -82,7 +96,15 @@ const Navigation = () => {
         
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8">
-         
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+            className="rounded-full"
+          >
+            {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
+          </Button>
           
           <div className="flex gap-4 items-center">
             <SignedIn>
@@ -91,7 +113,7 @@ const Navigation = () => {
                   {user?.firstName || user?.username}
                 </span>
                 <UserButton />
-</div>
+              </div>
             </SignedIn>
             
             <SignedOut>
@@ -132,6 +154,16 @@ const Navigation = () => {
         
         {/* Mobile Menu Button */}
         <div className="md:hidden flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+            className="rounded-full mr-1"
+          >
+            {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
+          </Button>
+          
           <SignedIn>
             <UserButton
               afterSignOutUrl="/"
@@ -166,7 +198,16 @@ const Navigation = () => {
           >
             <div className="container mx-auto py-4 px-6">
               <ul className="flex flex-col gap-4">
-                
+                <li className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={toggleTheme}
+                    className="w-full flex justify-center items-center gap-2"
+                  >
+                    {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
+                    Switch to {theme === "light" ? "Dark" : "Light"} Mode
+                  </Button>
+                </li>
                 
                 <SignedOut>
                   <li className="pt-4 mt-2 border-t">
