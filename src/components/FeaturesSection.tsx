@@ -35,7 +35,7 @@ const features = [
   },
   {
     title: 'Free to Use',
-    description: 'No account required, just upload and go.',
+    description: 'just upload and go.',
     icon: Coffee,
     color: 'text-neon-pink'
   }
